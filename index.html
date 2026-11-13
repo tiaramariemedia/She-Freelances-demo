@@ -235,7 +235,7 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
     </div>
     <div class="progress">
       <span class="progress-text" id="stepLabel">Sample scenario</span>
-      <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="dots" aria-hidden="true" id="dots"></div>
     </div>
   </div>
 </header>
@@ -264,8 +264,8 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
   <!-- ===================== INTRO ===================== -->
   <section class="screen" data-screen="intro">
     <span class="eyebrow" style="margin-top: 24px">Day 1 scenario · From idea to execution</span>
-    <h1 tabindex="-1"> POV: Your first <span class="underline"><em>brief</em></span> just landed.</h1>
-    <p>It's your first week as a creative strategist, and a collagen supplement brand wants new ads. Four decisions are coming. Make each call like it's real.</p>
+    <h1 tabindex="-1">POV: your first client just sent the <span class="underline"><em>brief</em></span>.</h1>
+    <p>It's your first week as a creative strategist, and a collagen supplement brand wants new ads. Five decisions are coming. Make each call like it's real.</p>
     <div class="thought is-sans">There's no perfect formula. Trust your gut, make the call, and see what happens.</div>
     <button class="btn" data-go="decision" style="margin-top: 12px">Start the scenario</button>
     <button class="link-btn" id="previewCheckin">Preview next week's check-in</button>
@@ -420,8 +420,32 @@ const decisions = [
         result: "You pitch it in one line: this is what I think will work and why. When results come in, your metrics tell you where to look next." }
     ],
     take: "Don't aim for the trendiest or best-looking ad. Aim for the most profitable. Pitch it with your hypothesis, \"this is what I think will work and why\", and let your metrics tell you where to look next."
+  },
+  {
+    when: "Two weeks later",
+    context: "compare",
+    cardTitle: "Your hypothesis vs. the first cut",
+    quotes: [
+      { label: "Your hypothesis", text: "A real customer's story that feels like a friend talking: calm, honest, close-up." },
+      { label: "The first cut from the editor", text: "Fast cuts, trending audio and emojis all over the screen." }
+    ],
+    thought: "The script's the same. Would pushing back be overstepping?",
+    question: "What do you do with the first cut?",
+    options: [
+      { text: "Approve it. The script was your part of the job.",
+        result: "It goes live with the wrong vibe and underperforms. Someone else re-edits it, it starts working, and they get the credit." },
+      { text: "Send clear notes on pacing, music and on-screen text",
+        result: "Same script, new edit: slower pacing, softer music, cleaner text. Now it feels like her story, and it performs." },
+      { text: "Rewrite the script from scratch",
+        result: "The script was never the problem. Two weeks later, the new version comes back with the same rushed edit." }
+    ],
+    take: "Creative strategy isn't one step you hand off. It's decisions at every stage: the script, the edit, the pacing, the music. You own the whole process, so pushing back on an edit is your job. And when an ad doesn't work, it's rarely the hook or the template. It's that you didn't understand the customer enough. The onus is on you, and that's a good thing: it's your chance to get closer to her."
   }
 ];
+
+// One progress dot per decision in the header
+const dotsBox = document.getElementById("dots");
+decisions.forEach(function () { dotsBox.append(make("span", "dot")); });
 
 // Choices for "One move this week"
 const moves = [
@@ -448,10 +472,10 @@ function showScreen(name) {
 
   // Header: "Decision 2 of 4" during the decisions, otherwise a label
   const inDecisions = name === "decision" || name === "consequence";
-  const step = inDecisions ? current + 1 : (name === "debrief" || name === "move" || name === "saved") ? 4 : 0;
+  const step = inDecisions ? current + 1 : (name === "debrief" || name === "move" || name === "saved") ? decisions.length : 0;
   document.querySelectorAll(".dot").forEach(function (d, i) { d.classList.toggle("is-on", i < step); });
   let label = "Sample scenario";
-  if (inDecisions) label = "Decision " + (current + 1) + " of 4";
+  if (inDecisions) label = "Decision " + (current + 1) + " of " + decisions.length;
   if (name === "debrief") label = "Debrief";
   if (name === "move" || name === "saved") label = "Your move";
   if (name === "checkin" || name === "checkin-reply") label = "Check-in";
