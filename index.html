@@ -125,6 +125,11 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
 .card-row { display: flex; justify-content: space-between; gap: 12px; padding-top: 10px; border-top: 1px solid var(--grid-line); font-size: 0.9rem; }
 .card-row strong { font-weight: 500; text-align: right; }
 
+/* Two quotes compared (brand words vs customer words) */
+.quote-row { padding-top: 10px; border-top: 1px solid var(--grid-line); display: flex; flex-direction: column; gap: 4px; }
+.quote-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.quote-text { font-family: var(--font-serif-italic); font-style: italic; font-weight: 500; font-size: 1.1rem; line-height: 1.3; }
+
 /* =========================================================
    5. BUTTONS (square + flat, like the site)
    ========================================================= */
@@ -225,7 +230,7 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
 <header class="header">
   <div class="header-inner">
     <div class="brand">
-      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6l1 1.4 1-1.4C14 6.1 15.6 5 17.6 5 21 5 23.1 8.4 21.6 11.8 19.5 16.4 12 21 12 21z" fill="#EB73A1"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><g fill="#EB73A1"><path d="M12 10.5C9.6 6.6 3.2 5.4 3 9.6c-.2 3.9 5.6 3.9 9 .9z"/><path d="M12 10.5c2.4-3.9 8.8-5.1 9-.9.2 3.9-5.6 3.9-9 .9z"/><path d="M11 11.5 7.6 20l2.3-.7 1.6 1.9L12.3 12z"/><path d="M13 11.5 16.4 20l-2.3-.7-1.6 1.9L11.7 12z"/><circle cx="12" cy="11" r="2" fill="#D9578B"/></g></svg>
       CS Intensive
     </div>
     <div class="progress">
@@ -258,10 +263,10 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
 
   <!-- ===================== INTRO ===================== -->
   <section class="screen" data-screen="intro">
-    <span class="eyebrow" style="margin-top: 24px">Week [X] scenario · Creative testing</span>
-    <h1 tabindex="-1">You just signed a <span class="underline"><em>retainer</em></span>.</h1>
-    <p>A skincare brand has hired you as their creative strategist. Four decisions are coming. Make each call like it's real.</p>
-    <div class="thought is-sans">There's no perfect answer here, just an educated guess and what happens next.</div>
+    <span class="eyebrow" style="margin-top: 24px">Day 1 scenario · From idea to execution</span>
+    <h1 tabindex="-1"> POV: Your first <span class="underline"><em>brief</em></span> just landed.</h1>
+    <p>It's your first week as a creative strategist, and a collagen supplement brand wants new ads. Four decisions are coming. Make each call like it's real.</p>
+    <div class="thought is-sans">There's no perfect formula. Trust your gut, make the call, and see what happens.</div>
     <button class="btn" data-go="decision" style="margin-top: 12px">Start the scenario</button>
     <button class="link-btn" id="previewCheckin">Preview next week's check-in</button>
   </section>
@@ -292,9 +297,9 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
     <span class="eyebrow">Your debrief</span>
     <h1 tabindex="-1">How Denée would <em>play it</em></h1>
     <ol class="debrief" id="debriefList"></ol>
-    <p class="quote">“Creative strategy is sophisticated gambling.”</p>
-    <p class="small" style="text-align: center">Make your educated guess, test it, and let the results decide what's next.</p>
-    <p class="small" style="text-align: center">Rewatch: Week [X], [lesson name]</p>
+    <p class="quote">“Creative strategy = decisions at every stage.”</p>
+    <p class="small" style="text-align: center">There's no perfect formula. Every call you make builds stronger gut instincts.</p>
+    <p class="small" style="text-align: center">Rewatch: Day 1, Creative Strategy From Idea To Execution</p>
     <button class="btn" data-go="move">Pick your move for this week</button>
   </section>
 
@@ -328,95 +333,105 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
    Every word the girls read lives here. Edit text without touching the HTML.
    context = the little picture above each question:
      "email"   -> a laptop showing an email
-     "account" -> a white card of facts about the ad account
-     "mix"     -> the 80/20 test mix bar
-     "notes"   -> a laptop showing call notes
+     "notes"   -> a laptop showing a list (set windowTitle + notesTitle)
+     "account" -> a white card of facts (set cardTitle)
+     "compare" -> a white card comparing two quotes
+     "mix"     -> the 80/20 test mix bar (not used in this scenario)
+   Built from Day 1 of the CS Intensive: "Creative Strategy From Idea To Execution".
    ========================================================= */
 const decisions = [
   {
-    when: "Day 1",
+    when: "Monday",
     context: "email",
-    email: { from: "Your new client", subject: "Re: kickoff", time: "9:04 AM",
-             text: "So excited to start! Can you send over your creative testing roadmap for the month by Friday?" },
-    thought: "I don't have a roadmap. Do I need one?",
-    question: "What do you do first?",
+    email: { from: "Your new client", subject: "Re: new ads", time: "8:47 AM",
+             text: "Hi! We need 5 new ads this month. Can you send us 10 hook ideas by tomorrow so we can start filming?" },
+    thought: "Everyone online says hooks are everything. Should I just start there?",
+    question: "Where do you start?",
     options: [
-      { text: "Spend the weekend building a full month-long roadmap",
-        result: "You hand over a beautiful month plan. By Wednesday, the first ad results change half of it." },
-      { text: "Ask for their top and lowest performers from the past 6 months",
-        result: "They send six months of winners and losers. You already see a pattern worth testing." },
-      { text: "Download a roadmap template and fill it in",
-        result: "It looks professional, but it isn't built on this brand's data. When they ask why you chose these tests, you don't have an answer." }
+      { text: "Write 10 hooks tonight and send them first thing",
+        result: "You send 10 hooks by morning. The client asks who they're for and why they'd work. You don't have an answer yet." },
+      { text: "Copy a competitor's winning ad word for word",
+        result: "It's built for someone else's customers. It looks like an ad this audience has already seen, and it doesn't speak to why they'd buy this brand." },
+      { text: "Research first: the brand, its competitors, and its customers",
+        result: "You study the brand, its competitors and real reviews. One competitor format is clearly working, so you adapt it for this brand's customers, who rave about their nails and hair." }
     ],
-    take: "You don't need a perfect roadmap. Denée has never built a month-long testing roadmap document. She starts by asking for the top and lowest performers, then forms a hypothesis from what's actually working."
+    take: "Creative strategy isn't just hooks, and it isn't just copying other ads. It's decisions at every stage, starting with research into the brand, its competitors and its customers. What's working for competitors is a smart starting point, as long as you adapt it to this brand's customers. Ads fail when you don't understand the customer."
   },
   {
-    when: "Day 3",
-    context: "account",
-    facts: [
-      ["Winning ads", "10"],
-      ["How similar", "All variations of one idea"],
-      ["Running for", "6 months"],
-      ["Funnel stage", "All top of funnel"]
+    when: "Wednesday",
+    context: "compare",
+    cardTitle: "Two ways to say it",
+    quotes: [
+      { label: "Brand website", text: "Supports keratin structure and dermal integrity." },
+      { label: "Real 5-star review", text: "My nails finally stopped breaking after years of trying everything." }
     ],
-    thought: "The client says: \"Just make more like our winners.\"",
-    question: "How do you split this month's ads?",
+    thought: "The brand's words sound so professional. Should I use them?",
+    question: "How does your script open?",
     options: [
-      { text: "Do what the client says: more variations of the winners",
-        result: "The client is happy for now. But every ad is the same idea, and performance starts to dip." },
-      { text: "Go mostly new angles: 80% new, 20% variations",
-        result: "You explain why the winners will likely tire out. The client trusts your reasoning and approves the new angles." },
-      { text: "Wait another month to collect more data first",
-        result: "A month passes with nothing new tested. The winners keep tiring while you wait for certainty." }
+      { text: "With the brand's words: \"Clinically formulated to support dermal integrity\"",
+        result: "It sounds polished, and nobody stops scrolling. It reads like an ad, because it is one." },
+      { text: "With the customer's words: \"My nails finally stopped breaking\"",
+        result: "It sounds like a friend talking. The opening line comes straight from a real review, and people stop to watch." },
+      { text: "With a trending sound and on-screen text about collagen",
+        result: "The trend gets views, but the comments are all about the sound, not the product." }
     ],
-    take: "You're the expert. Clients come with opinions, and your job is to check them against the data. Ten winners that are all variations, running for six months, are likely to tire out, so Denée would lean into new angles, like 80% new and 20% variations."
+    take: "Don't write ads, talk to people. Look at real reviews and comments, and use the words customers actually use, not the brand's. If it sounds like marketing, it won't work."
   },
   {
-    when: "Three weeks in",
-    context: "mix",
-    thought: "The new angles aren't landing, and the client is getting nervous.",
-    question: "Plan or data?",
-    options: [
-      { text: "Stick to 80/20. It's the plan.",
-        result: "You stay loyal to the plan. The results keep saying the same thing, and the client gets more nervous." },
-      { text: "Shift to 50/50 and explain why",
-        result: "Variations keep results steady while you keep testing new angles. The client relaxes." },
-      { text: "Drop new angles completely and go 100% variations",
-        result: "Results hold for now, but you've stopped learning. When the winners tire, you'll have nothing new ready." }
-    ],
-    take: "Creative strategy is an educated guess based on data, so don't get attached to the plan. If new angles aren't working after a few weeks, make the executive call to rebalance, for example to 50/50."
-  },
-  {
-    when: "Friday team call",
+    when: "Thursday",
     context: "notes",
+    windowTitle: "Client brief",
+    notesTitle: "What the client wants in one ad",
     notes: [
-      "Client wants more subscribers",
-      "Media buyer: current ads mostly bring one-time buyers",
-      "Next week: 6 new scripts due Monday"
+      "Introduce the brand",
+      "Explain all 5 ingredients",
+      "Show customer reviews",
+      "Include a discount code"
     ],
-    thought: "This isn't what the month plan said.",
-    question: "What do you do with next week's scripts?",
+    thought: "If I leave something out, the ad won't work… right?",
+    question: "How do you build it?",
     options: [
-      { text: "Stick with the plan from the start of the month",
-        result: "Next week's ads keep bringing one-time buyers. The plan was followed. The goal wasn't." },
-      { text: "Write next week's scripts for customers who stick around",
-        result: "Your scripts now speak to people who subscribe and come back. You're deciding from this week's data." },
-      { text: "Wait until the end of the month to re-plan",
-        result: "Three more weeks of ads bring the wrong customers before anything changes." }
+      { text: "Fit everything into one ad",
+        result: "The ad tries to do everything and does none of it well. New viewers have no idea why they should care." },
+      { text: "Pick one audience: people who've never heard of the brand",
+        result: "You write for people who've never heard of the brand: one problem they recognise, and one reason to keep watching." },
+      { text: "Make three versions of the all-in-one ad",
+        result: "Three versions of the same overloaded ad. Testing them tells you nothing new." }
     ],
-    take: "Decide week to week. When Friday's data shows you're attracting one-time buyers but the client wants subscribers, next week's scripts should go after customers with a higher lifetime value."
+    take: "Not every ad does everything. Know who you're talking to and where they are in the funnel: cold, warm or retargeting. Then speak to that one stage."
+  },
+  {
+    when: "Friday pitch",
+    context: "account",
+    cardTitle: "Your three concepts",
+    facts: [
+      ["Concept 1", "The viral trend everyone's using"],
+      ["Concept 2", "A glossy studio shoot"],
+      ["Concept 3", "A real customer's nail story"]
+    ],
+    thought: "What if I pick the wrong one?",
+    question: "Which do you pitch?",
+    options: [
+      { text: "Concept 1, because it's trending right now",
+        result: "The trend fades in a week, and so does the ad's performance." },
+      { text: "Concept 2, because it looks the most expensive",
+        result: "It's the best-looking ad in the account. It's also not the one that sells." },
+      { text: "Concept 3, with your hypothesis: what you think will work and why",
+        result: "You pitch it in one line: this is what I think will work and why. When results come in, your metrics tell you where to look next." }
+    ],
+    take: "Don't aim for the trendiest or best-looking ad. Aim for the most profitable. Pitch it with your hypothesis, \"this is what I think will work and why\", and let your metrics tell you where to look next."
   }
 ];
 
 // Choices for "One move this week"
 const moves = [
-  "Ask a brand (or my client) for their top and lowest performers",
-  "Write one hypothesis for an ad account I admire",
-  "Share my current thinking in the community and ask for feedback"
+  "Read 20 real reviews for a brand I like and note the exact words customers use",
+  "Write one hypothesis: what I think will work and why",
+  "Sort one brand's ads into cold, warm and retargeting"
 ];
 
 // Used by the "Preview next week's check-in" button if no move is saved yet
-const sampleMove = "Ask a brand (or my client) for their top and lowest performers";
+const sampleMove = "Read 20 real reviews for a brand I like and note the exact words customers use";
 
 /* =========================================================
    STATE
@@ -471,7 +486,7 @@ function buildContext(d) {
     const lid = make("div", "laptop-lid");
     const ui = make("div", "screen-ui");
     const bar = make("div", "window-bar");
-    bar.append(make("span"), make("span"), make("span"), make("span", "window-title", d.context === "email" ? "Inbox" : "Call notes"));
+    bar.append(make("span"), make("span"), make("span"), make("span", "window-title", d.context === "email" ? "Inbox" : (d.windowTitle || "Notes")));
     const body = make("div", "mail-body");
 
     if (d.context === "email") {
@@ -483,7 +498,7 @@ function buildContext(d) {
     } else {
       const list = make("ul", "notes");
       d.notes.forEach(function (n) { list.append(make("li", "", n)); });
-      body.append(make("strong", "", "Friday team call"), list);
+      body.append(make("strong", "", d.notesTitle || "Notes"), list);
     }
 
     ui.append(bar, body);
@@ -495,10 +510,21 @@ function buildContext(d) {
 
   if (d.context === "account") {
     box.className = "card";
-    box.append(make("span", "card-title", "The ad account"));
+    box.append(make("span", "card-title", d.cardTitle || "The ad account"));
     d.facts.forEach(function (f) {
       const row = make("div", "card-row");
       row.append(make("span", "", f[0]), make("strong", "", f[1]));
+      box.append(row);
+    });
+  }
+
+  if (d.context === "compare") {
+    // Two quotes stacked, each with a small label (e.g. brand words vs customer words)
+    box.className = "card";
+    box.append(make("span", "card-title", d.cardTitle || "Two ways to say it"));
+    d.quotes.forEach(function (q) {
+      const row = make("div", "quote-row");
+      row.append(make("span", "quote-label", q.label), make("p", "quote-text", "“" + q.text + "”"));
       box.append(row);
     });
   }
@@ -586,7 +612,7 @@ function showDebrief() {
     const yours = make("p", "your-call");
     yours.append(make("strong", "", "Your call: "), d.options[picks[i]].text);
     const label = make("span", "take-label");
-    label.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 5 6.4 5c2 0 3.6 1.1 4.6 2.6l1 1.4 1-1.4C14 6.1 15.6 5 17.6 5 21 5 23.1 8.4 21.6 11.8 19.5 16.4 12 21 12 21z" fill="#EB73A1"/></svg>';
+    label.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="#EB73A1"><path d="M12 10.5C9.6 6.6 3.2 5.4 3 9.6c-.2 3.9 5.6 3.9 9 .9z"/><path d="M12 10.5c2.4-3.9 8.8-5.1 9-.9.2 3.9-5.6 3.9-9 .9z"/><path d="M11 11.5 7.6 20l2.3-.7 1.6 1.9L12.3 12z"/><path d="M13 11.5 16.4 20l-2.3-.7-1.6 1.9L11.7 12z"/><circle cx="12" cy="11" r="2" fill="#D9578B"/></g></svg>';
     label.append("Denée's take");
     li.append(yours, label, make("p", "take", d.take));
     list.append(li);
