@@ -387,7 +387,7 @@ const weeks = [
   { num: 1, title: "How to know an ad will work before you even make it", ready: true, speaker: "Denée",
     closingQuote: "“Creative strategy = decisions at every stage.”",
     closingLine: "There's no perfect formula. Every call you make builds stronger gut instincts." },
-  { num: 2, title: "How to actually build and run a high-performing creative team", ready: false, speaker: "Lena" },
+  { num: 2, title: "How to actually build and run a high-performing creative team", ready: true, speaker: "Lena" },
   { num: 3, title: "How to pass your 3 month trial", ready: false },
   { num: 4, title: "Meta ads 101: how to build creative that actually earns spend", ready: false },
   { num: 5, title: "How to position, price, and sell yourself as a creative strategist", ready: false }
@@ -405,28 +405,29 @@ const weeks = [
 const decisions = [
   {
     week: 1,
-    context: "compare",
-    cardTitle: "Your hypothesis vs. the first cut",
-    quotes: [
-      { label: "Your hypothesis", text: "A real customer's story that feels like a friend talking: calm, honest, close-up." },
-      { label: "The first cut from the editor", text: "Fast cuts, trending audio and emojis all over the screen." }
+    context: "account",
+    cardTitle: "Your first ad, one week in",
+    facts: [
+      ["Status", "Live for 7 days"],
+      ["Performance", "Underperforming"],
+      ["Client asks", "\"What went wrong?\""]
     ],
-    thought: "The script's the same. Would pushing back be overstepping?",
-    question: "What do you do with the first cut?",
+    thought: "Maybe the hook was weak… or the template?",
+    question: "How do you figure out why it flopped?",
     options: [
-      { text: "Approve it. The script was your part of the job.",
-        result: "It goes live with the wrong vibe and underperforms. Someone else re-edits it, it starts working, and they get the credit." },
-      { text: "Send clear notes on pacing, music and on-screen text",
-        result: "Same script, new edit: slower pacing, softer music, cleaner text. Now it feels like her story, and it performs." },
-      { text: "Rewrite the script from scratch",
-        result: "The script was never the problem. Two weeks later, the new version comes back with the same rushed edit." }
+      { text: "Write a new batch of hooks and test again",
+        result: "New hooks, same flop. The words were never the problem." },
+      { text: "Switch to a trending template that's working for other brands",
+        result: "It looks fresh, but it still doesn't speak to her. The results barely move." },
+      { text: "Go back to the customer: reread reviews and comments to see what you missed",
+        result: "You find what she actually cares about, and it's not what the ad said. The next version speaks to her, and it performs." }
     ],
-    take: "Creative strategy isn't one step you hand off. It's decisions at every stage: the script, the edit, the pacing, the music. You own the whole process, so pushing back on an edit is your job. And when an ad doesn't work, it's rarely the hook or the template. It's that you didn't understand the customer enough. The onus is on you, and that's a good thing: it's your chance to get closer to her."
+    take: "When an ad doesn't work, it's rarely the hook or the template. It's that you didn't understand the customer enough. The onus is on you, and that's a good thing: it's your chance to get closer to her."
   },
   {
     week: 1,
     context: "compare",
-    cardTitle: "What the brand thinks vs. what customers say",
+    cardTitle: "What the brand thinks vs. what customers actually say",
     quotes: [
       { label: "What the brand thinks customers say", text: "I want glowing, youthful skin from the inside out." },
       { label: "What customers actually say in reviews", text: "My nails finally stopped breaking after years of trying everything." }
@@ -434,14 +435,35 @@ const decisions = [
     thought: "The brand knows their customers best… right?",
     question: "What's your hook?",
     options: [
-      { text: "The brand's version: \"Glowing, youthful skin from the inside out\"",
+      { text: "The brand's version: \"Want glowing, youthful skin from the inside out?\"",
         result: "It sounds like every other collagen ad, and nobody stops scrolling." },
-      { text: "The customer's words: \"My nails finally stopped breaking\"",
+      { text: "The customer's words: \"If you've tried everything for your breaking nails…\"",
         result: "It sounds like a friend talking. The hook comes straight from a real review, and people stop to watch." },
       { text: "A trending sound with on-screen text about collagen",
         result: "The trend gets views, but the comments are all about the sound, not the product." }
     ],
     take: "Don't write ads, talk to people. Most strategists go off what the brand thinks the customer says. Instead, go to real reviews and comments and use the words customers actually use. If it sounds like marketing, it won't work."
+  },
+  {
+    week: 2,
+    context: "compare",
+    cardTitle: "Your brief vs. the first cut",
+    quotes: [
+      { label: "Your brief's visual direction", text: "A real customer's story that feels like a friend talking: calm, honest, close-up." },
+      { label: "The first cut from the editor", text: "Fast cuts, trending audio and emojis all over the screen." }
+    ],
+    thought: "The script's the same. Would pushing back be overstepping?",
+    question: "What do you do with the first cut?",
+    options: [
+      { text: "Approve it. The script was your part of the job.",
+        result: "It goes live with the wrong vibe and underperforms. Someone else re-edits it, it starts working, and they get the credit." },
+      { text: "Send it back with notes that point to the brief: pacing, music, on-screen text",
+        result: "The editor re-cuts it to match the brief: slower pacing, softer music, cleaner text. Now it feels like her story, and it performs." },
+      { text: "Rewrite the script from scratch",
+        result: "The script was never the problem. Two weeks later, the new version comes back with the same rushed edit." }
+    ],
+    // PLACEHOLDER: this take is Denée's idea from Session 1. Replace with Lena's words once we have Session 2.
+    take: "Creative strategy isn't one step you hand off. It's decisions at every stage: the script, the edit, the pacing, the music. You own the whole process, so pushing back on an edit is your job."
   }
 ];
 
