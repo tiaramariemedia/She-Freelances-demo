@@ -218,6 +218,25 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
 .move-input { width: 100%; min-height: 84px; padding: 14px 16px; border: 1.6px dashed var(--black); border-radius: 18px; background: var(--white); font: inherit; color: var(--charcoal); resize: vertical; }
 .saved-move { background: var(--white); border: 1.6px solid var(--charcoal); padding: 16px 18px; font-family: var(--font-sans-medium); font-weight: 500; }
 
+/* =========================================================
+   8. HOME: the five intensive weeks
+   ========================================================= */
+.week-list { display: flex; flex-direction: column; gap: 10px; }
+.week-card {
+  width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  background: var(--white); border: 1.6px solid var(--charcoal); padding: 14px 18px;
+  color: var(--charcoal); cursor: pointer; transition: transform 0.2s ease;
+}
+.week-card:hover:not(:disabled) { transform: translateX(4px); }
+.week-card:disabled { cursor: default; background: transparent; border-style: dashed; border-color: #9C918D; color: #5F5753; }
+.week-info { display: flex; flex-direction: column; gap: 2px; }
+.week-num { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.week-name { font-family: var(--font-sans-medium); font-weight: 500; line-height: 1.3; }
+.week-status { flex: none; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 10px; border-radius: 999px; background: var(--petal); color: var(--charcoal); }
+.week-card.is-done .week-status { background: var(--charcoal); color: var(--white); }
+.week-card:disabled .week-status { background: transparent; border: 1px dashed currentColor; color: inherit; }
+.final-card { margin-top: 6px; }
+
 @media (prefers-reduced-motion: no-preference) {
   .screen:not([hidden]) { animation: fadeUp 0.48s cubic-bezier(.22, 1, .36, 1); }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -243,35 +262,24 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
 
 <main>
 
-  <!-- ===================== CHECK-IN (only shows when last week's move is saved) ===================== -->
-  <section class="screen" data-screen="checkin" hidden>
-    <span class="eyebrow">Before we start</span>
-    <h1 tabindex="-1">Last week's <em>move</em></h1>
-    <div class="saved-move" id="checkinMove"></div>
-    <h2>Did you do it?</h2>
-    <div class="choices two-up">
-      <button class="btn" data-checkin="done">Done</button>
-      <button class="btn is-outline" data-checkin="notyet">Not yet</button>
-    </div>
-  </section>
-
-  <section class="screen" data-screen="checkin-reply" hidden>
-    <h1 tabindex="-1" id="checkinTitle"></h1>
-    <p id="checkinText"></p>
-    <button class="btn" data-go="intro">Start this week's scenario</button>
-  </section>
-
-  <!-- ===================== INTRO ===================== -->
-  <section class="screen" data-screen="intro">
-    <span class="eyebrow" style="margin-top: 24px">Day 1 scenario · From idea to execution</span>
+  <!-- ===================== HOME: the five intensive weeks ===================== -->
+  <section class="screen" data-screen="home">
+    <span class="eyebrow" style="margin-top: 24px">CS Intensive capstone</span>
     <h1 tabindex="-1">POV: your client just requested the <span class="underline"><em>brief</em></span>.</h1>
-    <p>It's your first week as a creative strategist, and a collagen supplement brand wants new ads. Five decisions are coming. Make each call like it's real.</p>
+    <p>It's your first week as a creative strategist, and a collagen supplement brand wants new ads. One client, five weeks: each week tests what you learned in that week's session. Make each call like it's real.</p>
     <div class="thought is-sans">There's no perfect formula. Trust your gut, make the call, and see what happens.</div>
-    <button class="btn" data-go="decision" style="margin-top: 12px">Start the scenario</button>
-    <button class="link-btn" id="previewCheckin">Preview next week's check-in</button>
+    <span class="eyebrow">Your five weeks</span>
+    <div class="week-list" id="weekList"></div>
+    <div class="week-list final-card">
+      <button class="week-card" id="finalCard" disabled>
+        <span class="week-info"><span class="week-num">After Week 5</span><span class="week-name">Your one move</span></span>
+        <span class="week-status">Locked</span>
+      </button>
+    </div>
+    <button class="link-btn" id="previewMove">Preview: your one move</button>
   </section>
 
-  <!-- ===================== DECISION (filled in by JavaScript for each of the 4 decisions) ===================== -->
+  <!-- ===================== DECISION (filled in by JavaScript) ===================== -->
   <section class="screen" data-screen="decision" hidden>
     <span class="eyebrow" id="decisionWhen"></span>
     <div id="decisionContext"></div>
@@ -292,22 +300,22 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
     <button class="btn" id="nextDecision">Next decision</button>
   </section>
 
-  <!-- ===================== DEBRIEF ===================== -->
+  <!-- ===================== WEEK DEBRIEF ===================== -->
   <section class="screen" data-screen="debrief" hidden>
-    <span class="eyebrow">Your debrief</span>
-    <h1 tabindex="-1">How Denée would <em>play it</em></h1>
+    <span class="eyebrow" id="debriefWeek"></span>
+    <h1 tabindex="-1">How a high-ticket creative strategist would <em>play it</em></h1>
     <ol class="debrief" id="debriefList"></ol>
-    <p class="quote">“Creative strategy = decisions at every stage.”</p>
-    <p class="small" style="text-align: center">There's no perfect formula. Every call you make builds stronger gut instincts.</p>
-    <p class="small" style="text-align: center">Rewatch: Day 1, Creative Strategy From Idea To Execution</p>
-    <button class="btn" data-go="move">Pick your move for this week</button>
+    <p class="quote" id="closingQuote"></p>
+    <p class="small" style="text-align: center" id="closingLine"></p>
+    <p class="small" style="text-align: center" id="rewatchLine"></p>
+    <button class="btn" data-go="home">Back to your weeks</button>
   </section>
 
-  <!-- ===================== ONE MOVE THIS WEEK ===================== -->
+  <!-- ===================== YOUR ONE MOVE (after Week 5) ===================== -->
   <section class="screen" data-screen="move" hidden>
-    <span class="eyebrow">One move this week</span>
+    <span class="eyebrow">Your one move</span>
     <h1 tabindex="-1">Pick one real <em>move</em>.</h1>
-    <p>Small is perfect. We'll check in at the start of next week's scenario.</p>
+    <p>Small is perfect. One thing you'll do this week to put the intensive into action.</p>
     <div class="choices" id="moveOptions"></div>
     <label class="small" for="ownMove">Or write your own:</label>
     <textarea class="move-input" id="ownMove" placeholder="My move this week is…"></textarea>
@@ -316,11 +324,10 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
 
   <section class="screen" data-screen="saved" hidden>
     <span class="eyebrow">Your move is saved</span>
-    <h1 tabindex="-1">See you <em>next week</em>.</h1>
+    <h1 tabindex="-1">Now go make it <em>happen</em>.</h1>
     <div class="saved-move" id="savedMove"></div>
-    <p>Next week's scenario starts by asking how it went. Done or not yet, both are fine. What matters is that you moved.</p>
-    <button class="btn is-outline" id="playAgain">Play the scenario again</button>
-    <button class="link-btn" id="previewCheckin2">Preview next week's check-in</button>
+    <p>Share your move in the community so the girls can cheer you on.</p>
+    <button class="btn is-outline" data-go="home">Back to your weeks</button>
   </section>
 
 </main>
@@ -329,100 +336,33 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
 
 <script>
 /* =========================================================
-   THE SCENARIO DATA
-   Every word the girls read lives here. Edit text without touching the HTML.
+   THE FIVE INTENSIVE WEEKS
+   ready: true  -> the week can be played
+   ready: false -> shows "Coming soon" on the home screen (prototype only)
+   closingQuote / closingLine show at the bottom of that week's debrief.
+   ========================================================= */
+const weeks = [
+  { num: 1, title: "How to know an ad will work before you even make it", ready: true,
+    closingQuote: "“Creative strategy = decisions at every stage.”",
+    closingLine: "There's no perfect formula. Every call you make builds stronger gut instincts." },
+  { num: 2, title: "How to actually build and run a high-performing creative team", ready: false },
+  { num: 3, title: "How to pass your 3 month trial", ready: false },
+  { num: 4, title: "Meta ads 101: how to build creative that actually earns spend", ready: false },
+  { num: 5, title: "How to position, price, and sell yourself as a creative strategist", ready: false }
+];
+
+/* =========================================================
+   THE DECISIONS
+   week = which intensive week it belongs to (the label at the top comes from that week's title)
    context = the little picture above each question:
      "email"   -> a laptop showing an email
      "notes"   -> a laptop showing a list (set windowTitle + notesTitle)
      "account" -> a white card of facts (set cardTitle)
      "compare" -> a white card comparing two quotes
-     "mix"     -> the 80/20 test mix bar (not used in this scenario)
-   Built from Day 1 of the CS Intensive: "Creative Strategy From Idea To Execution".
    ========================================================= */
 const decisions = [
   {
-    when: "Monday",
-    context: "email",
-    email: { from: "Your new client", subject: "Re: first batch", time: "8:47 AM",
-             text: "Hi! So excited to get started. Can you send over your first batch of ad scripts by next Friday? Our creators need about a week to film after that." },
-    thought: "I want to impress them. Should I just start writing hooks tonight?",
-    question: "Where do you start?",
-    options: [
-      { text: "Start writing scripts tonight, hooks first",
-        result: "You send the batch by Friday. The client asks who each ad is for and why it would work. You don't have an answer yet." },
-      { text: "Copy a competitor's winning ad word for word",
-        result: "It's built for someone else's customers. It looks like an ad this audience has already seen, and it doesn't speak to why they'd buy this brand." },
-      { text: "Research first: the brand, its competitors, and its customers",
-        result: "You study the brand, its competitors and real reviews. One competitor format is clearly working, so you adapt it for this brand's customers, who rave about their nails and hair." }
-    ],
-    take: "Creative strategy isn't just hooks, and it isn't just copying other ads. It's decisions at every stage, starting with research into the brand, its competitors and its customers. What's working for competitors is a smart starting point, as long as you adapt it to this brand's customers. Understand the customer first, then you get a winning ad."
-  },
-  {
-    when: "Wednesday",
-    context: "compare",
-    cardTitle: "What the brand thinks vs. what customers actually say",
-    quotes: [
-      { label: "What the brand thinks customers say", text: "I want glowing, youthful skin from the inside out." },
-      { label: "What customers actually say in reviews", text: "My nails finally stopped breaking after years of trying everything." }
-    ],
-    thought: "The brand knows their customers best… right?",
-    question: "What's your hook?",
-    options: [
-      { text: "The brand's version: \"Glowing, youthful skin from the inside out\"",
-        result: "It sounds like every other collagen ad, and nobody stops scrolling." },
-      { text: "The customer's words: \"My nails finally stopped breaking\"",
-        result: "It sounds like a friend talking. The hook comes straight from a real review, and people stop to watch." },
-      { text: "A trending sound with on-screen text about collagen",
-        result: "The trend gets views, but the comments are all about the sound, not the product." }
-    ],
-    take: "Don't write ads, talk to people. Most strategists go off what the brand thinks the customer says. Instead, go to real reviews and comments and use the words customers actually use. If it sounds like marketing, it won't work."
-  },
-  {
-    when: "Thursday",
-    context: "notes",
-    windowTitle: "Client brief",
-    notesTitle: "What the client wants in one ad",
-    notes: [
-      "Introduce the brand",
-      "Explain all 5 ingredients",
-      "Show customer reviews",
-      "Include a discount code"
-    ],
-    thought: "If I leave something out, the ad won't work… right?",
-    question: "How do you build it?",
-    options: [
-      { text: "Fit everything into one ad",
-        result: "The ad tries to do everything and does none of it well. New viewers have no idea why they should care." },
-      { text: "Pick one audience: people who've never heard of the brand",
-        result: "You write for people who've never heard of the brand: one problem they recognise, and one reason to keep watching." },
-      { text: "Make three versions of the all-in-one ad",
-        result: "Three versions of the same overloaded ad. Testing them tells you nothing new." }
-    ],
-    take: "Not every ad does everything. Know who you're talking to and where they are in the funnel: cold, warm or retargeting. Then speak to that one stage."
-  },
-  {
-    when: "Friday pitch",
-    context: "account",
-    cardTitle: "Your three concepts",
-    facts: [
-      ["Concept 1", "The viral trend everyone's using"],
-      ["Concept 2", "A glossy studio shoot"],
-      ["Concept 3", "A real customer's nail story"]
-    ],
-    thought: "What if I pick the wrong one?",
-    question: "Which do you pitch?",
-    options: [
-      { text: "Concept 1, because it's trending right now",
-        result: "The trend fades in a week, and so does the ad's performance." },
-      { text: "Concept 2, because it looks the most expensive",
-        result: "It's the best-looking ad in the account. It's also not the one that sells." },
-      { text: "Concept 3, with your hypothesis: what you think will work and why",
-        result: "You pitch it in one line: this is what I think will work and why. When results come in, your metrics tell you where to look next." }
-    ],
-    take: "Don't aim for the trendiest or best-looking ad. Aim for the most profitable. Pitch it with your hypothesis, \"this is what I think will work and why\", and let your metrics tell you where to look next."
-  },
-  {
-    when: "Two weeks later",
+    week: 1,
     context: "compare",
     cardTitle: "Your hypothesis vs. the first cut",
     quotes: [
@@ -440,54 +380,45 @@ const decisions = [
         result: "The script was never the problem. Two weeks later, the new version comes back with the same rushed edit." }
     ],
     take: "Creative strategy isn't one step you hand off. It's decisions at every stage: the script, the edit, the pacing, the music. You own the whole process, so pushing back on an edit is your job. And when an ad doesn't work, it's rarely the hook or the template. It's that you didn't understand the customer enough. The onus is on you, and that's a good thing: it's your chance to get closer to her."
+  },
+  {
+    week: 1,
+    context: "compare",
+    cardTitle: "What the brand thinks vs. what customers say",
+    quotes: [
+      { label: "What the brand thinks customers say", text: "I want glowing, youthful skin from the inside out." },
+      { label: "What customers actually say in reviews", text: "My nails finally stopped breaking after years of trying everything." }
+    ],
+    thought: "The brand knows their customers best… right?",
+    question: "What's your hook?",
+    options: [
+      { text: "The brand's version: \"Glowing, youthful skin from the inside out\"",
+        result: "It sounds like every other collagen ad, and nobody stops scrolling." },
+      { text: "The customer's words: \"My nails finally stopped breaking\"",
+        result: "It sounds like a friend talking. The hook comes straight from a real review, and people stop to watch." },
+      { text: "A trending sound with on-screen text about collagen",
+        result: "The trend gets views, but the comments are all about the sound, not the product." }
+    ],
+    take: "Don't write ads, talk to people. Most strategists go off what the brand thinks the customer says. Instead, go to real reviews and comments and use the words customers actually use. If it sounds like marketing, it won't work."
   }
 ];
 
-// One progress dot per decision in the header
-const dotsBox = document.getElementById("dots");
-decisions.forEach(function () { dotsBox.append(make("span", "dot")); });
-
-// Choices for "One move this week"
+// Choices for "Your one move" (after Week 5)
 const moves = [
   "Read 20 real reviews for a brand I like and note the exact words customers use",
-  "Write one hypothesis: what I think will work and why",
-  "Sort one brand's ads into cold, warm and retargeting"
+  "Write one hook using a customer's exact words from a review",
+  "Watch one ad and note how the editing, music and pacing fit (or don't fit) who it's for"
 ];
-
-// Used by the "Preview next week's check-in" button if no move is saved yet
-const sampleMove = "Read 20 real reviews for a brand I like and note the exact words customers use";
 
 /* =========================================================
    STATE
    ========================================================= */
-let current = 0;     // which decision we're on (0 = the first one)
-let picks = [];      // which option she chose for each decision
+let currentWeek = 1;
+let weekDecisions = [];   // the decisions in the week being played
+let current = 0;          // which of those decisions we're on
+let picks = [];           // which option she chose for each one
+const doneWeeks = new Set();
 const STORAGE_KEY = "sfIntensiveMove";
-
-/* =========================================================
-   SHOW A SCREEN
-   ========================================================= */
-function showScreen(name) {
-  document.querySelectorAll(".screen").forEach(function (s) { s.hidden = s.dataset.screen !== name; });
-
-  // Header: "Decision 2 of 4" during the decisions, otherwise a label
-  const inDecisions = name === "decision" || name === "consequence";
-  const step = inDecisions ? current + 1 : (name === "debrief" || name === "move" || name === "saved") ? decisions.length : 0;
-  document.querySelectorAll(".dot").forEach(function (d, i) { d.classList.toggle("is-on", i < step); });
-  let label = "Sample scenario";
-  if (inDecisions) label = "Decision " + (current + 1) + " of " + decisions.length;
-  if (name === "debrief") label = "Debrief";
-  if (name === "move" || name === "saved") label = "Your move";
-  if (name === "checkin" || name === "checkin-reply") label = "Check-in";
-  document.getElementById("stepLabel").textContent = label;
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  const heading = document.querySelector('[data-screen="' + name + '"] h1, [data-screen="' + name + '"] h2');
-  if (heading) {
-    heading.focus({ preventScroll: true });
-    document.getElementById("announcer").textContent = heading.textContent;
-  }
-}
 
 /* =========================================================
    SMALL HELPERS
@@ -500,19 +431,77 @@ function make(tag, className, text) {
   return el;
 }
 
+function weekLabel(num) {
+  const wk = weeks.find(function (w) { return w.num === num; });
+  return "Intensive Week " + num + ": " + wk.title;
+}
+
+// Header: a short label plus a row of dots (lit = true/false for each dot)
+function setHeader(label, lit) {
+  document.getElementById("stepLabel").textContent = label;
+  const box = document.getElementById("dots");
+  box.replaceChildren();
+  lit.forEach(function (on) { box.append(make("span", on ? "dot is-on" : "dot")); });
+}
+
+/* =========================================================
+   SHOW A SCREEN
+   ========================================================= */
+function showScreen(name) {
+  document.querySelectorAll(".screen").forEach(function (s) { s.hidden = s.dataset.screen !== name; });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  const heading = document.querySelector('[data-screen="' + name + '"] h1, [data-screen="' + name + '"] h2');
+  if (heading) {
+    heading.focus({ preventScroll: true });
+    document.getElementById("announcer").textContent = heading.textContent;
+  }
+}
+
+/* =========================================================
+   HOME: the list of weeks
+   ========================================================= */
+function showHome() {
+  const list = document.getElementById("weekList");
+  list.replaceChildren();
+  weeks.forEach(function (wk) {
+    const done = doneWeeks.has(wk.num);
+    const card = make("button", done ? "week-card is-done" : "week-card");
+    const info = make("span", "week-info");
+    info.append(make("span", "week-num", "Week " + wk.num), make("span", "week-name", wk.title));
+    let status = "Start";
+    if (done) status = "Done ✓";
+    if (!wk.ready) status = "Coming soon";
+    card.append(info, make("span", "week-status", status));
+    if (!wk.ready) card.disabled = true;
+    else card.addEventListener("click", function () { startWeek(wk.num); });
+    list.append(card);
+  });
+  setHeader("Your capstone", weeks.map(function (wk) { return doneWeeks.has(wk.num); }));
+  showScreen("home");
+}
+
+/* =========================================================
+   PLAYING A WEEK
+   ========================================================= */
+function startWeek(num) {
+  currentWeek = num;
+  weekDecisions = decisions.filter(function (d) { return d.week === num; });
+  current = 0;
+  picks = [];
+  showDecision();
+}
+
 // The little picture above each question
 function buildContext(d) {
   const box = document.createElement("div");
 
   if (d.context === "email" || d.context === "notes") {
-    // A laptop with either an email or call notes on screen
     box.className = "laptop";
     const lid = make("div", "laptop-lid");
     const ui = make("div", "screen-ui");
     const bar = make("div", "window-bar");
     bar.append(make("span"), make("span"), make("span"), make("span", "window-title", d.context === "email" ? "Inbox" : (d.windowTitle || "Notes")));
     const body = make("div", "mail-body");
-
     if (d.context === "email") {
       const from = make("div", "mail-from");
       const who = make("div");
@@ -524,7 +513,6 @@ function buildContext(d) {
       d.notes.forEach(function (n) { list.append(make("li", "", n)); });
       body.append(make("strong", "", d.notesTitle || "Notes"), list);
     }
-
     ui.append(bar, body);
     lid.append(ui);
     const base = make("div", "laptop-base");
@@ -543,7 +531,7 @@ function buildContext(d) {
   }
 
   if (d.context === "compare") {
-    // Two quotes stacked, each with a small label (e.g. brand words vs customer words)
+    // Two quotes stacked, each with a small label
     box.className = "card";
     box.append(make("span", "card-title", d.cardTitle || "Two ways to say it"));
     d.quotes.forEach(function (q) {
@@ -551,22 +539,6 @@ function buildContext(d) {
       row.append(make("span", "quote-label", q.label), make("p", "quote-text", "“" + q.text + "”"));
       box.append(row);
     });
-  }
-
-  if (d.context === "mix") {
-    box.className = "card";
-    box.append(make("span", "card-title", "Your test mix"));
-    const bar = make("div", "mix-bar");
-    bar.setAttribute("role", "img");
-    bar.setAttribute("aria-label", "80% new angles, 20% variations");
-    bar.append(make("span", "mix-new"), make("span", "mix-iter"));
-    const legend = make("div", "mix-legend");
-    const a = make("span"); a.append(make("span", "swatch"), "New angles 80%"); a.firstChild.style.background = "var(--charcoal)";
-    const b = make("span"); b.append(make("span", "swatch"), "Variations 20%"); b.firstChild.style.background = "var(--petal)";
-    legend.append(a, b);
-    const r1 = make("div", "card-row"); r1.append(make("span", "", "Variations of winners"), make("strong", "", "Still working"));
-    const r2 = make("div", "card-row"); r2.append(make("span", "", "New angles"), make("strong", "", "Not landing yet"));
-    box.append(bar, legend, r1, r2);
   }
 
   return box;
@@ -579,17 +551,17 @@ function buildOption(letter, text) {
   return btn;
 }
 
-/* =========================================================
-   DECISIONS
-   ========================================================= */
+function decisionHeader() {
+  setHeader("Week " + currentWeek + " · Decision " + (current + 1) + " of " + weekDecisions.length,
+    weekDecisions.map(function (_, i) { return i <= current; }));
+}
+
 function showDecision() {
-  const d = decisions[current];
-  document.getElementById("decisionWhen").textContent = d.when;
+  const d = weekDecisions[current];
+  document.getElementById("decisionWhen").textContent = weekLabel(d.week);
   document.getElementById("decisionThought").textContent = d.thought;
   document.getElementById("decisionQuestion").textContent = d.question;
-
-  const context = document.getElementById("decisionContext");
-  context.replaceChildren(buildContext(d));
+  document.getElementById("decisionContext").replaceChildren(buildContext(d));
 
   const options = document.getElementById("decisionOptions");
   options.replaceChildren();
@@ -599,24 +571,22 @@ function showDecision() {
     options.append(btn);
   });
 
+  decisionHeader();
   showScreen("decision");
 }
 
 function choose(i) {
   picks[current] = i;
-  const d = decisions[current];
-  const opt = d.options[i];
-
-  const picked = document.getElementById("pickedOption");
-  picked.replaceChildren(make("span", "option-letter", "ABC".charAt(i)), make("span", "option-text", opt.text));
+  const opt = weekDecisions[current].options[i];
+  document.getElementById("pickedOption").replaceChildren(make("span", "option-letter", "ABC".charAt(i)), make("span", "option-text", opt.text));
   document.getElementById("consequenceText").textContent = opt.result;
-  document.getElementById("nextDecision").textContent = current < decisions.length - 1 ? "Next decision" : "See your debrief";
-
+  document.getElementById("nextDecision").textContent = current < weekDecisions.length - 1 ? "Next decision" : "See your debrief";
+  decisionHeader();
   showScreen("consequence");
 }
 
 document.getElementById("nextDecision").addEventListener("click", function () {
-  if (current < decisions.length - 1) {
+  if (current < weekDecisions.length - 1) {
     current++;
     showDecision();
   } else {
@@ -625,41 +595,54 @@ document.getElementById("nextDecision").addEventListener("click", function () {
 });
 
 /* =========================================================
-   DEBRIEF: her call next to Denée's take, for each decision
+   WEEK DEBRIEF: her call next to the take, for each decision
    ========================================================= */
+const BOW = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="#EB73A1"><path d="M12 10.5C9.6 6.6 3.2 5.4 3 9.6c-.2 3.9 5.6 3.9 9 .9z"/><path d="M12 10.5c2.4-3.9 8.8-5.1 9-.9.2 3.9-5.6 3.9-9 .9z"/><path d="M11 11.5 7.6 20l2.3-.7 1.6 1.9L12.3 12z"/><path d="M13 11.5 16.4 20l-2.3-.7-1.6 1.9L11.7 12z"/><circle cx="12" cy="11" r="2" fill="#D9578B"/></g></svg>';
+
 function showDebrief() {
+  const wk = weeks.find(function (w) { return w.num === currentWeek; });
+  document.getElementById("debriefWeek").textContent = "Week " + wk.num + " debrief";
+
   const list = document.getElementById("debriefList");
   list.replaceChildren();
-  decisions.forEach(function (d, i) {
+  weekDecisions.forEach(function (d, i) {
     const li = make("li");
-    li.append(make("span", "eyebrow", (i + 1) + ". " + d.when));
+    li.append(make("span", "eyebrow", (i + 1) + ". " + d.question));
     const yours = make("p", "your-call");
     yours.append(make("strong", "", "Your call: "), d.options[picks[i]].text);
     const label = make("span", "take-label");
-    label.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="#EB73A1"><path d="M12 10.5C9.6 6.6 3.2 5.4 3 9.6c-.2 3.9 5.6 3.9 9 .9z"/><path d="M12 10.5c2.4-3.9 8.8-5.1 9-.9.2 3.9-5.6 3.9-9 .9z"/><path d="M11 11.5 7.6 20l2.3-.7 1.6 1.9L12.3 12z"/><path d="M13 11.5 16.4 20l-2.3-.7-1.6 1.9L11.7 12z"/><circle cx="12" cy="11" r="2" fill="#D9578B"/></g></svg>';
+    label.innerHTML = BOW;
     label.append("Denée's take");
     li.append(yours, label, make("p", "take", d.take));
     list.append(li);
   });
+
+  document.getElementById("closingQuote").textContent = wk.closingQuote || "";
+  document.getElementById("closingLine").textContent = wk.closingLine || "";
+  document.getElementById("rewatchLine").textContent = "Rewatch: Intensive Week " + wk.num + ", " + wk.title;
+
+  doneWeeks.add(wk.num);
+  setHeader("Week " + wk.num + " debrief", weekDecisions.map(function () { return true; }));
   showScreen("debrief");
 }
 
 /* =========================================================
-   ONE MOVE THIS WEEK
+   YOUR ONE MOVE (after Week 5)
    Saved on her own device with localStorage.
    (try/catch: some browsers block storage, and the page should still work)
    ========================================================= */
+function showMove() {
+  document.getElementById("ownMove").value = "";
+  setHeader("Your one move", []);
+  showScreen("move");
+}
+
 function saveMove(text) {
   try { localStorage.setItem(STORAGE_KEY, text); } catch (e) {}
   document.getElementById("savedMove").textContent = text;
   showScreen("saved");
 }
 
-function getSavedMove() {
-  try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
-}
-
-// Build the move choices
 const moveOptions = document.getElementById("moveOptions");
 moves.forEach(function (m, i) {
   const btn = buildOption(String(i + 1), m);
@@ -673,43 +656,18 @@ document.getElementById("saveOwnMove").addEventListener("click", function () {
   else document.getElementById("ownMove").focus();
 });
 
-// The check-in at the start of next week
-function showCheckin(move) {
-  document.getElementById("checkinMove").textContent = move;
-  showScreen("checkin");
-}
-
-document.querySelectorAll("[data-checkin]").forEach(function (btn) {
-  btn.addEventListener("click", function () {
-    const done = btn.dataset.checkin === "done";
-    document.getElementById("checkinTitle").innerHTML = done ? "That's how <em>momentum</em> starts." : "No shame, <em>keep going</em>.";
-    document.getElementById("checkinText").textContent = done
-      ? "You turned a lesson into action. That's the whole point."
-      : "Life happens. Carry it into this week, or pick a new move at the end of today's scenario.";
-    showScreen("checkin-reply");
-  });
-});
-
-function previewCheckin() { showCheckin(getSavedMove() || sampleMove); }
-document.getElementById("previewCheckin").addEventListener("click", previewCheckin);
-document.getElementById("previewCheckin2").addEventListener("click", previewCheckin);
+document.getElementById("previewMove").addEventListener("click", showMove);
 
 /* =========================================================
    OTHER BUTTONS
    ========================================================= */
-function restart() { current = 0; picks = []; document.getElementById("ownMove").value = ""; }
-
 document.addEventListener("click", function (e) {
   const btn = e.target.closest("[data-go]");
-  if (!btn) return;
-  if (btn.dataset.go === "decision") { restart(); showDecision(); }
-  else showScreen(btn.dataset.go);
+  if (btn && btn.dataset.go === "home") showHome();
 });
 
-document.getElementById("playAgain").addEventListener("click", function () { restart(); showScreen("intro"); });
-
-// Start on the intro
-showScreen("intro");
+// Start on the home screen
+showHome();
 </script>
 </body>
 </html>
