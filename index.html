@@ -326,7 +326,6 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
     <span class="eyebrow">Your move is saved</span>
     <h1 tabindex="-1">Now go make it <em>happen</em>.</h1>
     <div class="saved-move" id="savedMove"></div>
-    <p>Share your move in the community so the girls can cheer you on.</p>
     <button class="btn is-outline" data-go="home">Back to your weeks</button>
   </section>
 
@@ -339,13 +338,15 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
    THE FIVE INTENSIVE WEEKS
    ready: true  -> the week can be played
    ready: false -> shows "Coming soon" on the home screen (prototype only)
+   speaker = who led that session; the debrief says "[speaker]'s take"
+   A week stays locked until the week before it is done.
    closingQuote / closingLine show at the bottom of that week's debrief.
    ========================================================= */
 const weeks = [
-  { num: 1, title: "How to know an ad will work before you even make it", ready: true,
+  { num: 1, title: "How to know an ad will work before you even make it", ready: true, speaker: "Denée",
     closingQuote: "“Creative strategy = decisions at every stage.”",
     closingLine: "There's no perfect formula. Every call you make builds stronger gut instincts." },
-  { num: 2, title: "How to actually build and run a high-performing creative team", ready: false },
+  { num: 2, title: "How to actually build and run a high-performing creative team", ready: false, speaker: "Lena" },
   { num: 3, title: "How to pass your 3 month trial", ready: false },
   { num: 4, title: "Meta ads 101: how to build creative that actually earns spend", ready: false },
   { num: 5, title: "How to position, price, and sell yourself as a creative strategist", ready: false }
@@ -419,6 +420,17 @@ let current = 0;          // which of those decisions we're on
 let picks = [];           // which option she chose for each one
 const doneWeeks = new Set();
 const STORAGE_KEY = "sfIntensiveMove";
+const PROGRESS_KEY = "sfIntensiveProgress";
+
+// Remember where she is, so a refresh picks up in the same spot
+// (try/catch: some browsers block storage, and the page should still work)
+function saveProgress(screen) {
+  const data = { done: Array.from(doneWeeks), week: currentWeek, current: current, picks: picks, screen: screen };
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(data)); } catch (e) {}
+}
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || null; } catch (e) { return null; }
+}
 
 /* =========================================================
    SMALL HELPERS
@@ -468,15 +480,18 @@ function showHome() {
     const card = make("button", done ? "week-card is-done" : "week-card");
     const info = make("span", "week-info");
     info.append(make("span", "week-num", "Week " + wk.num), make("span", "week-name", wk.title));
+    const unlocked = wk.num === 1 || doneWeeks.has(wk.num - 1);
     let status = "Start";
     if (done) status = "Done ✓";
-    if (!wk.ready) status = "Coming soon";
+    else if (!unlocked) status = "Locked";
+    else if (!wk.ready) status = "Coming soon";
     card.append(info, make("span", "week-status", status));
-    if (!wk.ready) card.disabled = true;
+    if (!unlocked || !wk.ready) card.disabled = true;
     else card.addEventListener("click", function () { startWeek(wk.num); });
     list.append(card);
   });
   setHeader("Your capstone", weeks.map(function (wk) { return doneWeeks.has(wk.num); }));
+  saveProgress("home");
   showScreen("home");
 }
 
@@ -572,6 +587,7 @@ function showDecision() {
   });
 
   decisionHeader();
+  saveProgress("decision");
   showScreen("decision");
 }
 
@@ -582,6 +598,7 @@ function choose(i) {
   document.getElementById("consequenceText").textContent = opt.result;
   document.getElementById("nextDecision").textContent = current < weekDecisions.length - 1 ? "Next decision" : "See your debrief";
   decisionHeader();
+  saveProgress("consequence");
   showScreen("consequence");
 }
 
@@ -612,7 +629,7 @@ function showDebrief() {
     yours.append(make("strong", "", "Your call: "), d.options[picks[i]].text);
     const label = make("span", "take-label");
     label.innerHTML = BOW;
-    label.append("Denée's take");
+    label.append((wk.speaker || "The") + (wk.speaker ? "'s take" : " take"));
     li.append(yours, label, make("p", "take", d.take));
     list.append(li);
   });
@@ -623,6 +640,7 @@ function showDebrief() {
 
   doneWeeks.add(wk.num);
   setHeader("Week " + wk.num + " debrief", weekDecisions.map(function () { return true; }));
+  saveProgress("debrief");
   showScreen("debrief");
 }
 
@@ -666,8 +684,26 @@ document.addEventListener("click", function (e) {
   if (btn && btn.dataset.go === "home") showHome();
 });
 
-// Start on the home screen
-showHome();
+// Start where she left off (or on the home screen)
+(function resume() {
+  const saved = loadProgress();
+  if (!saved) { showHome(); return; }
+  (saved.done || []).forEach(function (n) { doneWeeks.add(n); });
+  const list = decisions.filter(function (d) { return d.week === saved.week; });
+  const picksOk = Array.isArray(saved.picks);
+  if (saved.screen === "decision" && list[saved.current]) {
+    currentWeek = saved.week; weekDecisions = list; current = saved.current; picks = picksOk ? saved.picks : [];
+    showDecision();
+  } else if (saved.screen === "consequence" && list[saved.current] && picksOk && saved.picks[saved.current] !== undefined) {
+    currentWeek = saved.week; weekDecisions = list; current = saved.current; picks = saved.picks;
+    choose(picks[current]);
+  } else if (saved.screen === "debrief" && picksOk && saved.picks.length === list.length) {
+    currentWeek = saved.week; weekDecisions = list; current = list.length - 1; picks = saved.picks;
+    showDebrief();
+  } else {
+    showHome();
+  }
+})();
 </script>
 </body>
 </html>
