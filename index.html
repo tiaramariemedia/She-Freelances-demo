@@ -264,7 +264,7 @@ em { font-family: var(--font-serif-italic); font-style: italic; font-weight: 700
   <!-- ===================== INTRO ===================== -->
   <section class="screen" data-screen="intro">
     <span class="eyebrow" style="margin-top: 24px">Day 1 scenario · From idea to execution</span>
-    <h1 tabindex="-1">POV: your first client just sent the <span class="underline"><em>brief</em></span>.</h1>
+    <h1 tabindex="-1">POV: your client just requested the <span class="underline"><em>brief</em></span>.</h1>
     <p>It's your first week as a creative strategist, and a collagen supplement brand wants new ads. Five decisions are coming. Make each call like it's real.</p>
     <div class="thought is-sans">There's no perfect formula. Trust your gut, make the call, and see what happens.</div>
     <button class="btn" data-go="decision" style="margin-top: 12px">Start the scenario</button>
@@ -343,13 +343,13 @@ const decisions = [
   {
     when: "Monday",
     context: "email",
-    email: { from: "Your new client", subject: "Re: new ads", time: "8:47 AM",
-             text: "Hi! We need 5 new ads this month. Can you send us 10 hook ideas by tomorrow so we can start filming?" },
-    thought: "Everyone online says hooks are everything. Should I just start there?",
+    email: { from: "Your new client", subject: "Re: first batch", time: "8:47 AM",
+             text: "Hi! So excited to get started. Can you send over your first batch of ad scripts by Friday so we can start filming?" },
+    thought: "Friday is so soon. Should I just start writing hooks tonight?",
     question: "Where do you start?",
     options: [
-      { text: "Write 10 hooks tonight and send them first thing",
-        result: "You send 10 hooks by morning. The client asks who they're for and why they'd work. You don't have an answer yet." },
+      { text: "Start writing scripts tonight, hooks first",
+        result: "You send the batch by Friday. The client asks who each ad is for and why it would work. You don't have an answer yet." },
       { text: "Copy a competitor's winning ad word for word",
         result: "It's built for someone else's customers. It looks like an ad this audience has already seen, and it doesn't speak to why they'd buy this brand." },
       { text: "Research first: the brand, its competitors, and its customers",
@@ -360,22 +360,22 @@ const decisions = [
   {
     when: "Wednesday",
     context: "compare",
-    cardTitle: "Two ways to say it",
+    cardTitle: "What the brand thinks vs. what customers say",
     quotes: [
-      { label: "Brand website", text: "Supports keratin structure and dermal integrity." },
-      { label: "Real 5-star review", text: "My nails finally stopped breaking after years of trying everything." }
+      { label: "What the brand thinks customers say", text: "I want glowing, youthful skin from the inside out." },
+      { label: "What customers actually say in reviews", text: "My nails finally stopped breaking after years of trying everything." }
     ],
-    thought: "The brand's words sound so professional. Should I use them?",
-    question: "How does your script open?",
+    thought: "The brand knows their customers best… right?",
+    question: "What's your hook?",
     options: [
-      { text: "With the brand's words: \"Clinically formulated to support dermal integrity\"",
-        result: "It sounds polished, and nobody stops scrolling. It reads like an ad, because it is one." },
-      { text: "With the customer's words: \"My nails finally stopped breaking\"",
-        result: "It sounds like a friend talking. The opening line comes straight from a real review, and people stop to watch." },
-      { text: "With a trending sound and on-screen text about collagen",
+      { text: "The brand's version: \"Glowing, youthful skin from the inside out\"",
+        result: "It sounds like every other collagen ad, and nobody stops scrolling." },
+      { text: "The customer's words: \"My nails finally stopped breaking\"",
+        result: "It sounds like a friend talking. The hook comes straight from a real review, and people stop to watch." },
+      { text: "A trending sound with on-screen text about collagen",
         result: "The trend gets views, but the comments are all about the sound, not the product." }
     ],
-    take: "Don't write ads, talk to people. Look at real reviews and comments, and use the words customers actually use, not the brand's. If it sounds like marketing, it won't work."
+    take: "Don't write ads, talk to people. Most strategists go off what the brand thinks the customer says. Instead, go to real reviews and comments and use the words customers actually use. If it sounds like marketing, it won't work."
   },
   {
     when: "Thursday",
